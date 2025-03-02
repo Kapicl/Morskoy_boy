@@ -45,31 +45,31 @@ while running:
                 pygame.mixer.music.stop()
                 shot_sound.play()
             elif event.key == pygame.K_w and not missile_launched:
-                missile_speedy = -2
+                missile_speed_y = -2
             elif event.key == pygame.K_s and not missile_launched:
                 missile_speed_y = 2
-        if missile_alive:
-            missile.move_ip(missile_speed_x, missile_speed_y)
-            if not missile.colliderect(screen_rect):
+    if missile_alive:
+        missile.move_ip(missile_speed_x, missile_speed_y)
+        if not missile.colliderect(screen_rect):
                 missile_alive = False
                 background_color = GAME_OVER_COLOR
                 pygame.mixer.music.stop()
                 fail_sound.play()
-            if ship_alive and missile.colliderect(ship):
+        if ship_alive and missile.colliderect(ship):
                 missile_alive = False
                 ship_alive = False
                 background_color = WIN_COLOR
                 explosion_sound.play()
-        if ship_alive:
-            ship.move_ip(0, ship_speed_y)
-            if ship.bottom > screen_rect.bottom or ship.top < screen_rect.top:
-                ship_speed_y = -ship_speed_y
-        screen.fill(background_color)
-        if ship_alive:
-            pygame.draw.rect(screen, SHIP_COLOR, ship)
-        if missile_alive:
-            pygame.draw.rect(screen, MISSILE_COLOR, missile)
-        pygame.display.flip()
-        clock.tick(FPS)
+    if ship_alive:
+        ship.move_ip(0, ship_speed_y)
+        if ship.bottom > screen_rect.bottom or ship.top < screen_rect.top:
+            ship_speed_y = -ship_speed_y
+    screen.fill(background_color)
+    if ship_alive:
+        pygame.draw.rect(screen, SHIP_COLOR, ship)
+    if missile_alive:
+        pygame.draw.rect(screen, MISSILE_COLOR, missile)
+    pygame.display.flip()
+    clock.tick(FPS)
 pygame.quit()
 
