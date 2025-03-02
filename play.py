@@ -9,12 +9,12 @@ pygame.mixer.music.load("soundtrack.mp3")
 pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(0.3)
 shot_sound.set_volume(0.6)
-FPS = 120
+FPS = 60
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((640, 480))
 screen_rect = screen.get_rect()
 MAIN_BACKGROUND_COLOR = (255, 255, 255)
-MISSILE_COLOR = (255, 0,0)
+MISSILE_COLOR = (255, 0, 0)
 SHIP_COLOR = (0, 0, 255)
 GAME_OVER_COLOR = (0, 0, 0)
 WIN_COLOR = (0, 255, 0)
@@ -31,17 +31,19 @@ ship_speed_y = 1
 ship_alive = True
 missile_alive = True
 missile_launched = False
+lives = 3
+ammo = 5
 running = True
-
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE and not missile_launched:
+            if event.key == pygame.K_SPACE and not missile_launched and ammo > 0:
                 missile_launched = True
                 missile_speed_y = 0
                 missile_speed_x = 3
+                ammo -= 1  # Уменьшаем количество патронов
                 pygame.mixer.music.stop()
                 shot_sound.play()
             elif event.key == pygame.K_w and not missile_launched:
@@ -51,15 +53,18 @@ while running:
     if missile_alive:
         missile.move_ip(missile_speed_x, missile_speed_y)
         if not missile.colliderect(screen_rect):
-                missile_alive = False
-                background_color = GAME_OVER_COLOR
-                pygame.mixer.music.stop()
-                fail_sound.play()
+            missile_alive = False
+            background_color = GAME_OVER_COLOR
+            pygame.mixer.music.stop()
+            fail_sound.play()
+            lives -= 1  # Уменьшаем количество жизней
+            if lives <= 0:
+                running = False  # Завершаем игру, если кончились жизни
         if ship_alive and missile.colliderect(ship):
-                missile_alive = False
-                ship_alive = False
-                background_color = WIN_COLOR
-                explosion_sound.play()
+            missile_alive = False
+            ship_alive = False
+            background_color = WIN_COLOR
+            explosion_sound.play()
     if ship_alive:
         ship.move_ip(0, ship_speed_y)
         if ship.bottom > screen_rect.bottom or ship.top < screen_rect.top:
@@ -69,7 +74,14 @@ while running:
         pygame.draw.rect(screen, SHIP_COLOR, ship)
     if missile_alive:
         pygame.draw.rect(screen, MISSILE_COLOR, missile)
+
+    font = pygame.font.Font(None, 36)
+    lives_text = font.render(f'Lives: {lives}', True, (0, 0, 0))
+    ammo_text = font.render(f'Ammo: {ammo}', True, (0, 0, 0))
+    screen.blit(lives_text, (10, 10))
+    screen.blit(ammo_text, (10, 50))
     pygame.display.flip()
     clock.tick(FPS)
 pygame.quit()
+
 
