@@ -7,7 +7,7 @@ explosion_sound = pygame.mixer.Sound("explosion.mp3")
 fail_sound = pygame.mixer.Sound("fail.mp3")
 pygame.mixer.music.load("soundtrack.mp3")
 pygame.mixer.music.play(-1)
-pygame.mixer.music.set.volume(0.3)
+pygame.mixer.music.set_volume(0.3)
 shot_sound.set_volume(0.6)
 FPS = 120
 clock = pygame.time.Clock()
